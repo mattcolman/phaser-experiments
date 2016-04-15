@@ -10,7 +10,7 @@ var Util = {
 
 var useSpritesheetBuilder = true
 
-class SpriteSheetBuilderTest extends GameState {
+class SpriteSheetBuilderExample extends GameState {
 
   preload() {
     this.game.load.crossOrigin = 'anonymous'
@@ -109,4 +109,4 @@ class SpriteSheetBuilderTest extends GameState {
 
 }
 
-export default SpriteSheetBuilderTest;
+export default SpriteSheetBuilderExample;

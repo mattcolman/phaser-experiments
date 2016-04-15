@@ -1,6 +1,6 @@
 import GameState from './states/game_state';
 import Boot from './states/boot';
-import SpriteSheetBuilderTest from './states/spritesheet_builder_test'
+import SpriteSheetBuilderExample from './states/spritesheet_builder_example'
 
 class Game extends Phaser.Game {
 
@@ -66,7 +66,7 @@ class Game extends Phaser.Game {
 
 Game.prototype.states = [
   ['boot', Boot],
-  ['Spritesheet Builder Test', SpriteSheetBuilderTest],
+  ['Spritesheet Builder Example', SpriteSheetBuilderExample],
 ]
 
 
