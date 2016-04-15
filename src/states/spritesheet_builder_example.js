@@ -19,66 +19,26 @@ class SpriteSheetBuilderExample extends GameState {
   create() {
     super.create()
 
-    this.createShapes()
-
-    window.State = this
-  }
-
-  createShapes() {
     let numCircles = 300
 
-    if (useSpritesheetBuilder) this.addSpriteSheetBuilder(numCircles)
-
-    let xPadding = 10
-    let yPadding = 10
+    this.addSpriteSheetBuilder(numCircles)
 
     this.circles = []
     for (var i = 0; i < numCircles; i++) {
-      let circle = this.addCircle(i)
+      let circle = this.game.add.image(0, 0, 'new-atlas', `circle${i}`)
       circle.position.set(Util.randInt(0, this.world.width), Util.randInt(0, this.world.height))
       this.circles.push(circle)
     }
   }
 
   addSpriteSheetBuilder(numCircles) {
-    let ssb = new SpriteSheetBuilder(this.game)
-
-    let square = this.game.add.graphics(0, 0)
-    square.beginFill(0xff0000)
-          .drawRect(0, 0, 100, 100)
-    let squareImage = square.generateTexture()
-    square.destroy()
-
-    let circle = this.game.add.graphics(0, 0)
-    circle.beginFill(0x333333)
-          .drawCircle(0, 0, 100)
-    let circleImage = circle.generateTexture()
-    circle.destroy()
-    // ssb.addFrames([['square', squareImage], ['circle', circleImage]])
-
-    // Draw the atlas
-    // let im = this.game.add.image(0, 0, ssb.bmd)
-
-    let circles = _.times(numCircles, ()=> {
-      return this.makeBmd(50, 10)
+    var ssb = new SpriteSheetBuilder(this.game)
+    var i = 0
+    _.times(numCircles, ()=> {
+      ssb.addFrame(`circle${i++}`, this.makeBmd(50, 10).texture)
     })
 
-    var i = 0
-    ssb.addFrames(
-      _.map(circles, (circle)=> {
-        return [`circle${i++}`, circle.texture]
-      })
-    )
-
     ssb.buildToCache('new-atlas')
-  }
-
-  addCircle(i) {
-    if (useSpritesheetBuilder) {
-      return this.game.add.image(0, 0, 'new-atlas', `circle${i}`)
-    } else {
-      return this.game.add.image(0, 0, this.makeBmd(50, 10))
-    }
   }
 
   update() {

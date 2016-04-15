@@ -15,8 +15,8 @@ class SpriteSheetBuilder {
     this.data = {frames: []}
   }
 
-  addFrame(arr) {
-    this.frames.push(arr)
+  addFrame(key, texture) {
+    this.frames.push([key, texture])
   }
 
   addFrames(textures) {
