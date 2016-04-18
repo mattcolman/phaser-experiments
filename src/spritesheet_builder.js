@@ -43,6 +43,7 @@ class SpriteSheetBuilder {
 
   _sortFrames() {
     // TODO - maxRects algorithm anyone??
+    // maybe just sort by height for now?
   }
 
   _buildFrames() {

@@ -1,6 +1,6 @@
 import GameState from './states/game_state';
 import Boot from './states/boot';
-import SpriteSheetBuilderExample from './states/spritesheet_builder_example'
+import Particles from './states/particles'
 
 class Game extends Phaser.Game {
 
@@ -12,16 +12,16 @@ class Game extends Phaser.Game {
     this.scale.forceOrientation(true) // landscape
     this.scale.pageAlignHorizontally = true
 
-    if (this.device.desktop) {
-      this.scale.setResizeCallback(this.fitToWindow, this)
-    } else {
-      // Mobile
-      this.scale.setResizeCallback(this.fitToWindowMobile, this)
-    }
+    // if (this.device.desktop) {
+    //   this.scale.setResizeCallback(this.fitToWindow, this)
+    // } else {
+    //   // Mobile
+    //   this.scale.setResizeCallback(this.fitToWindowMobile, this)
+    // }
   }
 
   fitToWindowMobile() {
-  let gameHeight = this.height
+    let gameHeight = this.height
     let windowAspectRatio = window.innerWidth/window.innerHeight
     let gameWidth = Math.ceil(this.height * windowAspectRatio)
     this.scale.setGameSize(gameWidth, gameHeight)
@@ -66,7 +66,7 @@ class Game extends Phaser.Game {
 
 Game.prototype.states = [
   ['boot', Boot],
-  ['Spritesheet Builder Example', SpriteSheetBuilderExample],
+  ['SpriteSheetBuilder Example', Particles]
 ]
 
 
