@@ -57,4 +57,5 @@ triangle() {
 }
 ```
 
+Note: Currently the only "plugin" in this repo is `SpriteSheetBuilder`, and it's actually not a Plugin. But this could be done very easily! It's just an experiment at this stage.
 
