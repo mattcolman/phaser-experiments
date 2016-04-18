@@ -2,6 +2,14 @@ import _ from 'lodash';
 
 class SpriteSheetBuilder {
 
+  /**
+   * @param  {Phaser.Game} game
+   * @param  {Object} options
+   * @option {Int} padding : padding between each sprite
+   * @option {Int} width : width of the spritesheet
+   * @option {Int} height : height of the spritesheet
+   * }
+   */
   constructor(game, options = {}) {
     this.game = game
 
@@ -15,16 +23,30 @@ class SpriteSheetBuilder {
     this.data = {frames: []}
   }
 
+  /**
+   * @param {String} key to reference as a frame
+   * @param {PIXI.Texture} texture to draw to the spritesheet
+   * @note This just stores a frame in memory. You must call buildToCache() to use it.
+   */
   addFrame(key, texture) {
     this.frames.push([key, texture])
   }
 
+  /**
+   * @param {Array} [key, texture]
+   */
   addFrames(textures) {
     textures.forEach((arr)=> {
       this.addFrame(arr)
     })
   }
 
+  /**
+   * Build all frames into the Phaser cache.
+   * You can now use these frames like a normal texture atlas.
+   * @example this.game.add.image(0, 0, 'buildToCache-key', 'frame-key')
+   * @param  {String} atlas key
+   */
   buildToCache(key) {
     this._sortFrames()
     this._buildFrames()
