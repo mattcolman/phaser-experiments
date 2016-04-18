@@ -12,6 +12,16 @@ Run a development build...
 
 Original setup came from `https://github.com/belohlavek/phaser-es6-boilerplate`
 
+Idea
+
+SpriteSheets and Texture Atlases have proven to help with performance. By drawing vector shapes into a spritesheet
+we save on load time (nothing to download) and performance is still fast (because we draw the vectors to a spritesheet).
+
+This repo includes one example using particles. Tests are as follows:
+1. Storing each texture in memory individually the average frame time was ~4.5ms.
+We see in chrome dev tools a `bindTexture` call. I assume this is where textures are uploaded to GPU as there are 3 different textures to draw.
+2. Using SpriteSheetBuilder the average frame time was ~3ms. There is no `bindTexture` call as all particles are drawn from the same texture.
+
 Example
 
 ```
