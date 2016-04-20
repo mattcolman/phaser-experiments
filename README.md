@@ -12,7 +12,7 @@ Run a development build...
 
 Original setup came from `https://github.com/belohlavek/phaser-es6-boilerplate`
 
-##Idea
+##SpriteSheet Builder
 
 SpriteSheets and Texture Atlases have proven to help with performance. By drawing vector shapes into a spritesheet
 we save on load time (nothing to download) and performance is still fast (because we draw the vectors to a spritesheet).
@@ -23,7 +23,7 @@ This repo includes one example using particles. Tests are as follows.
 2. Using SpriteSheetBuilder the average frame time was ~3ms. There is no `bindTexture` call as all particles are drawn from the same texture.
 
 
-##Example
+#Example
 
 ```
 create() {
@@ -57,5 +57,38 @@ triangle() {
 }
 ```
 
-Note: Currently the only "plugin" in this repo is `SpriteSheetBuilder`, and it's actually not a Plugin. But this could be done very easily! It's just an experiment at this stage.
+## ListView
 
+Making iOS-like ListViews are pretty common. It's also common that when you make them yourself performance suffers. Here is a start at making a high-performance ListView for Phaser. Currently the example adds 500 items to the ListView and performance is holding up. With that said, if the list view is truely infinite we should think about completely removing items beyond a certain threshold. 
+
+This approach uses a mask to mask items that overlap the bounds. (Not sure if this is the fastest method? But it seems pretty fast actually).
+The main performance boost comes from autoculling items. Chrome actually still runs at 60fps without culling, but FF slowed down dramatically and showed 500 draw calls in the canvas inspector. After culling the drawing calls were reduced to ~10 and fps back up to 60.
+
+#Example
+
+```
+create() {
+
+    var w = 600
+    var h = 100
+
+    this.listView = new ListView(this.game, this.world, new Phaser.Rectangle(this.world.centerX - w/2, 120, w, 400), {
+      overflow: 100,
+      autocull: true
+    })
+    
+    for (var i = 0; i < 500; i++) {
+      let color = Phaser.Color.getRandomColor()
+      let group = this.game.make.group(null)
+      let g = this.game.add.graphics(0, 0, group)
+      g.beginFill(color)
+       .drawRect(0, 0, w, h)
+
+      let txt = this.game.add.text(w/2, h/2, i, {font: "40px Arial", fill: "#000"}, group)
+      txt.anchor.set(.5)
+      let img = this.game.add.image(0, 0, group.generateTexture())
+      this.listView.add(img)
+    }
+  }
+  
+  ```
