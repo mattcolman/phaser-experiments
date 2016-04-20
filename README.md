@@ -23,7 +23,7 @@ This repo includes one example using particles. Tests are as follows.
 2. Using SpriteSheetBuilder the average frame time was ~3ms. There is no `bindTexture` call as all particles are drawn from the same texture.
 
 
-#Example
+###Example
 
 ```
 create() {
@@ -64,7 +64,7 @@ Making iOS-like ListViews are pretty common. It's also common that when you make
 This approach uses a mask to mask items that overlap the bounds. (Not sure if this is the fastest method? But it seems pretty fast actually).
 The main performance boost comes from autoculling items. Chrome actually still runs at 60fps without culling, but FF slowed down dramatically and showed 500 draw calls in the canvas inspector. After culling the drawing calls were reduced to ~10 and fps back up to 60.
 
-#Example
+###Example
 
 ```
 create() {
