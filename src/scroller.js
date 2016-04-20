@@ -3,7 +3,8 @@ import {nearestMultiple, percentageBetween2} from './utils/math_utils'
 import 'gsap'
 
 // Pure logic scroller
-
+// Originally adapted from http://yusyuslabs.com/tutorial-momentum-scrolling-inside-scrollable-area-with-phaser-js/
+//
 class Scroller {
 
   constructor(game, clickObject, options = {}) {
