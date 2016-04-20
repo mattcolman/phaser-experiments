@@ -148,7 +148,7 @@ class Scroller {
     this.scrollObject[this.o.direction] = this.target
     this.handleUpdate()
 
-    // if (this.o.emitMoving) this.events.onInputMove.dispatch({pointer, x, y})
+    if (this.o.emitMoving) this.events.onInputMove.dispatch({pointer, x, y})
   }
 
   requestTarget(target, min, max, overflow) {
@@ -163,7 +163,6 @@ class Scroller {
       calculatedTarget = min - diff*this.o.deceleration
       calculatedTarget = Math.max(calculatedTarget, min - overflow)
     }
-    // console.log('requestTargetAngle in:', angle, ' out: ', calculatedAngle)
     return calculatedTarget
   }
 
@@ -198,7 +197,6 @@ class Scroller {
 
       //calc for moving
       var touchTime = this.o.time.up - this.o.time.move;
-      // var maxOffset = this.length * this.o.speedLimit;
 
       //distance to move after release
       var offset = Math.pow(this.acc, 2) * this.maskLimits[this.o.direction];
@@ -232,10 +230,6 @@ class Scroller {
     if ((touchTime < this.o.moveThreshold) && offset !== 0 && Math.abs(offset) > (this.o.offsetThreshold)) {
       target += offset
       duration = this.o.duration * Math.min((Math.abs(offset) / maxOffset), 1)
-      console.log("<<< momentum!!!!!!!!!", offset, target, duration)
-    } else {
-      console.log("<<< NO momentum :(")
-      duration = 1
     }
 
     return [duration, target]
@@ -262,7 +256,6 @@ class Scroller {
 
   handleComplete() {
     // reset multiplier when finished
-    console.log('<<<<<<<< complete')
     this.o.multiplier = 1;
     this.events.onComplete.dispatch()
   }
