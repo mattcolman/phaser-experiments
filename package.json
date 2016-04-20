@@ -1,5 +1,5 @@
 {
-  "name": "phaser-plugins",
+  "name": "phaser-experiments",
   "version": "0.0.1",
   "description": "Built with Phaser and ES6",
   "main": "src/index.js",
@@ -7,8 +7,14 @@
     "start": "gulp",
     "production": "gulp --production"
   },
-  "author": "Matt Colman",
+  "author": "Matt Colman <matt@mattcolman.com>",
   "license": "MIT",
+  "keywords": [
+    "phaser",
+    "spritesheet builder",
+    "listview",
+    "performance"
+  ],
   "devDependencies": {
     "babelify": "~5.0.3",
     "browser-sync": "^2.8.0",
