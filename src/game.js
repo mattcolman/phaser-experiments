@@ -1,6 +1,8 @@
 import GameState from './states/game_state';
 import Boot from './states/boot';
 import Particles from './states/particles'
+import ListViewExample from './states/list_view_state'
+import Lobby from './states/lobby'
 
 class Game extends Phaser.Game {
 
@@ -9,7 +11,7 @@ class Game extends Phaser.Game {
     this.input.maxPointers = 1
     this.scale.scaleMode = Phaser.ScaleManager.USER_SCALE
     this.scale.setMinMax(this.width / 2, this.height / 2, this.width, this.height)
-    this.scale.forceOrientation(true) // landscape
+    // this.scale.forceOrientation(true) // landscape
     this.scale.pageAlignHorizontally = true
 
     // if (this.device.desktop) {
@@ -62,12 +64,32 @@ class Game extends Phaser.Game {
     this.state.start(this.states[index][0])
   }
 
+  addDropDownMenu() {
+    this.experiments.forEach((a)=> {
+      let [name, klass] = a
+
+      let option = document.createElement("option");
+      option.text = name
+      document.getElementById('selector').add(option);
+    })
+
+    document.getElementById('selector').addEventListener('change', (e)=> {
+      this.state.start(e.target.value)
+    })
+
+  }
+
 }
 
-Game.prototype.states = [
-  ['boot', Boot],
-  ['SpriteSheetBuilder Example', Particles]
+Game.prototype.experiments = [
+  ['lobby', Lobby],
+  ['SpriteSheetBuilder Example', Particles],
+  ['ListView Example', ListViewExample]
 ]
+
+Game.prototype.states = [
+  ['boot', Boot]
+].concat(Game.prototype.experiments)
 
 
 export default Game;

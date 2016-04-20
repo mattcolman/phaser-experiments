@@ -8,7 +8,7 @@ class Boot extends Phaser.State {
 
 	create() {
     console.log('boot me up')
-
+    this.game.addDropDownMenu()
     this.game.setupStage()
     this.game.addStates()
     this.game.startGame()

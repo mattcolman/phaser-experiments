@@ -1,3 +1,13 @@
 body {
   margin: 0px;
 }
+
+#select-content {
+  margin: 0px;
+  margin-top: 10px;
+  text-align: center;
+}
+
+#content {
+  margin-top: 10px;
+}
