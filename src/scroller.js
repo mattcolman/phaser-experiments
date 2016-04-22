@@ -31,12 +31,14 @@ class Scroller {
       accelerationT : 250, // (ms) time between successive swipes that determines if the multiplier is increased (if lower than this value)
       maxAcceleration : 4,
       time : {}, // contains timestamps of the most recent down, up, and move events
-      multiplier : 1 //acceleration multiplier, don't edit here
+      multiplier : 1, //acceleration multiplier, don't edit here
+      swipeEnabled : false,
+      swipeThreshold: 250
     }
 
     this.o = this.options = _.extend(defaultOptions, options)
 
-    this.updateMinMax()
+    this._updateMinMax()
 
     this.debug          = false
 
@@ -57,17 +59,15 @@ class Scroller {
       onComplete: this.handleComplete,
       onCompleteScope: this
     })
-
-    window.Scroller = this
   }
 
   setFromTo(_from, _to) {
     this.o.from = _from
     this.o.to = _to
-    this.updateMinMax()
+    this._updateMinMax()
   }
 
-  updateMinMax() {
+  _updateMinMax() {
     this.min = Math.min(this.o.from, this.o.to)
     this.max = Math.max(this.o.from, this.o.to)
     this.length = Math.abs(this.max - this.min)
@@ -76,11 +76,12 @@ class Scroller {
   addListeners() {
 
     this.events = {
-      onUpdate: new Phaser.Signal(),
-      onInputUp: new Phaser.Signal(),
-      onInputDown: new Phaser.Signal(),
-      onInputMove: new Phaser.Signal(),
-      onComplete: new Phaser.Signal()
+      onUpdate    : new Phaser.Signal(),
+      onInputUp   : new Phaser.Signal(),
+      onInputDown : new Phaser.Signal(),
+      onInputMove : new Phaser.Signal(),
+      onComplete  : new Phaser.Signal(),
+      onSwipe     : new Phaser.Signal()
     }
 
     this.clickObject.inputEnabled = true
@@ -103,7 +104,7 @@ class Scroller {
 
   handleDown(target, pointer) {
     // console.log('input down', pointer.y)
-    this.old = this.downY = pointer[this.o.direction]
+    this.old = this.down = pointer[this.o.direction]
     this.target = this.requested = this.scrollObject[this.o.direction]
     this.o.time.down = pointer.timeDown;
 
@@ -138,7 +139,7 @@ class Scroller {
     //store timestamp for event
     this.o.time.move = this.game.time.time
 
-    let _distance = this.downY - o[this.o.direction]
+    let _distance = this.down - o[this.o.direction]
 
     // this.acc = Math.abs(_distance / (this.o.time.move - this.o.time.down))
     this.acc = Math.min(Math.abs(this.diff/30), this.o.maxAcceleration)
@@ -171,7 +172,7 @@ class Scroller {
     this.game.input.deleteMoveCallback(this.handleMove, this)
 
     //store timestamp for event
-    this.o.time.up = pointer.timeUp;
+    this.o.time.up = pointer.timeUp
 
     if (this.o.time.up - this.o.time.down > this.o.accelerationT) {
       this.o.multiplier = 1 // reset
@@ -179,7 +180,7 @@ class Scroller {
 
     // *** END LIMITS
     var maxOffset = this.maskLimits[this.o.direction] * this.o.speedLimit
-    let _distance = this.downY - pointer[this.o.direction]
+    let _distance = this.down - pointer[this.o.direction]
     let duration = 1
 
     // *** BOUNCING
@@ -204,7 +205,21 @@ class Scroller {
       offset = (this.diff > 0) ? -this.o.multiplier * offset : this.o.multiplier * offset;
 
       // // *** MOMENTUM
-      let [_duration, _target] = this.addMomentum(this.target, touchTime, offset, maxOffset)
+      var [_duration, _target] = this.addMomentum(this.target, touchTime, offset, maxOffset)
+
+      // *** SWIPING
+      if (this.o.swipeEnabled && this.o.time.up - this.o.time.down < this.o.swipeThreshold) {
+        _duration = 1
+        let direction = (pointer[this.o.direction] < this.down) ? 'forward' : 'backward'
+
+        if (direction == 'forward') {
+          _target -= this.o.snapStep/2
+        } else {
+          _target += this.o.snapStep/2
+        }
+
+        this.events.onSwipe.dispatch(direction)
+      }
 
       // // *** SNAPPING
       this.target = this.snap(_target)
@@ -221,7 +236,6 @@ class Scroller {
     if (!this.o.snapping) return target
 
     target = nearestMultiple(target, this.o.snapStep)
-
     target = Math.max(target, this.min)
     target = Math.min(target, this.max)
 
@@ -254,7 +268,7 @@ class Scroller {
   }
 
   handleUpdate() {
-    this.dispatchValues.step = this.diff
+    this.dispatchValues.step = this.diff // this is currently doesn't work with momentum
     this.dispatchValues.total = this.scrollObject[this.o.direction]
     this.dispatchValues.percent = percentageBetween2(this.scrollObject[this.o.direction], this.o.from, this.o.to)
     this.events.onUpdate.dispatch(this.dispatchValues)
@@ -262,10 +276,10 @@ class Scroller {
 
   handleComplete() {
     // reset multiplier when finished
-    this.o.multiplier = 1;
+    this.o.multiplier = 1
     this.events.onComplete.dispatch()
   }
 
 }
 
-export default Scroller;
+export default Scroller

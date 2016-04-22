@@ -4,7 +4,7 @@ import {scaleBetween} from '../utils/math_utils'
 import ListView from '../list_view'
 import SwipeCarousel from '../swipe_carousel'
 
-class ListViewState extends GameState {
+class SwipeCarouselState extends GameState {
 
   preload() {
     this.game.load.crossOrigin = 'anonymous'
@@ -15,31 +15,29 @@ class ListViewState extends GameState {
     var maskW = 600
     var maskH = 200
     var boxW = maskW
-    var boxH = 50
+    var boxH = 200
 
-    var listView = new ListView(this.game, this.world, new Phaser.Rectangle(this.world.centerX - maskW/2, 120, maskW, 400), {
-      direction: 'y'
-    })
+    var carousel = new SwipeCarousel(this.game, this.world, new Phaser.Rectangle(this.world.centerX - maskW/2, 120, maskW, 400))
 
-    for (var i = 0; i < 500; i++) {
+    for (var i = 0; i < 10; i++) {
       let color = Phaser.Color.getRandomColor()
       let group = this.game.make.group(null)
       let g = this.game.add.graphics(0, 0, group)
-      let h = boxH + Math.floor(Math.random()*100)
       g.beginFill(color)
-       .drawRect(0, 0, boxW, h)
+       .drawRect(0, 0, boxW, boxH)
 
-      let txt = this.game.add.text(boxW/2, h/2, i, {font: "40px Arial", fill: "#000"}, group)
+      let txt = this.game.add.text(boxW/2, boxH/2, i, {font: "40px Arial", fill: "#000"}, group)
       txt.anchor.set(.5)
       let img = this.game.add.image(0, 0, group.generateTexture())
-      listView.add(img)
+      carousel.add(img)
     }
 
     super.create()
 
   }
 
+
 }
 
 
-export default ListViewState;
+export default SwipeCarouselState;
