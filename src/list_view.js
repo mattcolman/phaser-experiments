@@ -9,6 +9,7 @@ class ListView {
     this.bounds = bounds
 
     let defaultOptions = {
+      direction: 'y',
       autocull: true,
       momentum: true,
       bouncing: true,
@@ -18,6 +19,12 @@ class ListView {
     }
 
     this.o = this.options = _.extend(defaultOptions, options)
+
+    if (this.o.direction == 'y') {
+      this.p = {xy: 'y', wh: 'height'}
+    } else {
+      this.p = {xy: 'x', wh: 'width'}
+    }
 
     this.grp = this.game.add.group(parent)
     this.grp.position.set(bounds.x, bounds.y)
@@ -32,21 +39,22 @@ class ListView {
       momentum: this.o.momentum,
       bouncing: this.o.bouncing,
       snapping: this.o.snapping,
-      overflow: this.o.overflow
+      overflow: this.o.overflow,
+      direction: this.o.direction
     })
     this.scroller.events.onUpdate.add(this.update, this)
   }
 
   add(child) {
-    let y = 0
+    let xy = 0
     if (this.grp.children.length > 0) {
       let lastChild = this.grp.getChildAt(this.grp.children.length-1)
-      y = lastChild.y + lastChild.height + this.o.padding
+      xy = lastChild[this.p.xy] + lastChild[this.p.wh] + this.o.padding
     }
-    child.y = y
+    child[this.p.xy] = xy
     this.grp.addChild(child)
 
-    this.scroller.setFromTo(0, -this.grp.height + this.bounds.height)
+    this.scroller.setFromTo(0, -this.grp[this.p.wh] + this.bounds[this.p.wh])
     if (this.o.autocull) this.cull()
   }
 
@@ -59,7 +67,7 @@ class ListView {
   }
 
   update(o) {
-    this.grp.y = this.bounds.y + o.total
+    this.grp[this.p.xy] = this.bounds[this.p.xy] + o.total
     if (this.o.autocull) this.cull()
   }
 
@@ -67,9 +75,9 @@ class ListView {
     for (var i = 0; i < this.grp.children.length; i++) {
       let child = this.grp.children[i]
       child.revive()
-      if (child.y + child.height + this.grp.y < this.bounds.y) {
+      if (child[this.p.xy] + child[this.p.wh] + this.grp[this.p.xy] < this.bounds[this.p.xy]) {
         child.kill()
-      } else if (child.y + this.grp.y > this.bounds.y + this.bounds.height) {
+      } else if (child[this.p.xy] + this.grp[this.p.xy] > this.bounds[this.p.xy] + this.bounds[this.p.wh]) {
         child.kill()
       }
     }
