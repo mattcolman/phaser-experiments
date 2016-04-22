@@ -33,15 +33,10 @@ class ListView {
     this.grp.mask = this._addMask(bounds)
 
     // we have to use a new mask instance for the click object or webgl ignores the mask
-    this.scroller = new Scroller(this.game, this._addMask(bounds), {
+    this.scroller = new Scroller(this.game, this._addMask(bounds), _.extend({
       from: 0,
-      to: 0,
-      momentum: this.o.momentum,
-      bouncing: this.o.bouncing,
-      snapping: this.o.snapping,
-      overflow: this.o.overflow,
-      direction: this.o.direction
-    })
+      to: 0
+    }, this.options))
     this.scroller.events.onUpdate.add(this.update, this)
   }
 

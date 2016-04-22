@@ -40,7 +40,9 @@ class ListViewState extends GameState {
   addListView(x, y, w, h) {
     return new ListView(this.game, this.world, new Phaser.Rectangle(x, y, w, h), {
       overflow: 100,
-      direction: 'x'
+      direction: 'x',
+      snapping: true,
+      snapStep: 100
     })
   }
 

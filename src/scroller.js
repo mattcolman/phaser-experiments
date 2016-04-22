@@ -217,8 +217,14 @@ class Scroller {
   }
 
   snap(target) {
+
+    if (!this.o.snapping) return target
+
+    target = nearestMultiple(target, this.o.snapStep)
+
     target = Math.max(target, this.min)
     target = Math.min(target, this.max)
+
     return target
   }
 
