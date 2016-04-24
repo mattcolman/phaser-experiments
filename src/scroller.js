@@ -12,6 +12,8 @@ class Scroller {
     this.game        = game
     this.clickObject = clickObject
 
+    window.Scroller = this
+
     let defaultOptions = {
       from : 0,
       to : 200,
@@ -50,6 +52,7 @@ class Scroller {
     this.scrollObject[this.o.direction] = 0
 
     this.maskLimits = {x: this.clickObject.width, y: this.clickObject.height}
+    this.maxOffset  = this.maskLimits[this.o.direction] * this.o.speedLimit
 
     // set tween that will be re-used for moving scrolling sprite
     this.tweenScroll = TweenMax.to(this.scrollObject, 0, {
@@ -130,9 +133,9 @@ class Scroller {
     let o = {x, y}
     this.diff = this.old - o[this.o.direction]
 
-    this.requested -= this.diff
+    this.diff = this.requestDiff(this.diff, this.target, this.min, this.max, this.o.overflow)
 
-    this.target = this.requestTarget(this.requested, this.min, this.max, this.o.overflow)
+    this.target -= this.diff
 
     this.old = o[this.o.direction]
 
@@ -152,20 +155,33 @@ class Scroller {
     if (this.o.emitMoving) this.events.onInputMove.dispatch({pointer, x, y})
   }
 
-  requestTarget(target, min, max, overflow) {
-    var diff = 0
-    var calculatedTarget = target
+  // requestTarget(target, min, max, overflow) {
+  //   var diff = 0
+  //   var calculatedTarget = target
+  //   if (target > max) {
+  //     console.log('max')
+  //     diff = target - max
+  //     calculatedTarget = max + diff * (overflow-diff) / overflow
+  //   } else if (target < min) {
+  //     diff = min - target
+  //     calculatedTarget = min - diff*this.o.deceleration
+  //     calculatedTarget = Math.max(calculatedTarget, min - overflow)
+  //   }
+  //   return calculatedTarget
+  // }
+
+  requestDiff(diff, target, min, max, overflow) {
+    let scale = 0
     if (target > max) {
-      diff = target - max
-      calculatedTarget = max + diff*this.o.deceleration
-      calculatedTarget = Math.min(calculatedTarget, max + overflow)
+      scale = (max+overflow-target) / overflow
+      diff *= scale
     } else if (target < min) {
-      diff = min - target
-      calculatedTarget = min - diff*this.o.deceleration
-      calculatedTarget = Math.max(calculatedTarget, min - overflow)
+      scale = -(min-overflow-target) / overflow
+      diff *= scale
     }
-    return calculatedTarget
+    return diff
   }
+
 
   handleUp(target, pointer) {
     // console.log('end')
@@ -179,7 +195,6 @@ class Scroller {
     }
 
     // *** END LIMITS
-    var maxOffset = this.maskLimits[this.o.direction] * this.o.speedLimit
     let _distance = this.down - pointer[this.o.direction]
     let duration = 1
 
@@ -201,58 +216,66 @@ class Scroller {
 
       //distance to move after release
       var offset = Math.pow(this.acc, 2) * this.maskLimits[this.o.direction];
-      offset = Math.min(maxOffset, offset)
+      offset = Math.min(this.maxOffset, offset)
       offset = (this.diff > 0) ? -this.o.multiplier * offset : this.o.multiplier * offset;
 
-      // // *** MOMENTUM
-      var [_duration, _target] = this.addMomentum(this.target, touchTime, offset, maxOffset)
+      // *** MOMENTUM
+      this.target = this.addMomentum(this.target, touchTime, offset)
 
       // *** SWIPING
       if (this.o.swipeEnabled && this.o.time.up - this.o.time.down < this.o.swipeThreshold) {
-        _duration = 1
+        duration = 1
         let direction = (pointer[this.o.direction] < this.down) ? 'forward' : 'backward'
 
         if (direction == 'forward') {
-          _target -= this.o.snapStep/2
+          this.target -= this.o.snapStep/2
         } else {
-          _target += this.o.snapStep/2
+          this.target += this.o.snapStep/2
         }
 
         this.events.onSwipe.dispatch(direction)
       }
 
-      // // *** SNAPPING
-      this.target = this.snap(_target)
+      // *** SNAPPING
+      this.target = this.snap(this.target)
 
-      this.doTween(_duration, this.target)
+      // *** LIMITS
+      this.target = this.limit(this.target)
+
+      // *** DURATION
+      let distance = Math.abs(this.target - this.scrollObject[this.o.direction])
+      duration = this.getDuration(distance)
+
+      this.doTween(duration, this.target)
     }
 
     this.events.onInputUp.dispatch({target, pointer})
 
   }
 
-  snap(target) {
+  getDuration(distance) {
+    return this.o.duration * distance / this.maxOffset
+  }
 
-    if (!this.o.snapping) return target
-
-    target = nearestMultiple(target, this.o.snapStep)
+  limit(target) {
     target = Math.max(target, this.min)
     target = Math.min(target, this.max)
-
     return target
   }
 
-  addMomentum(target, touchTime, offset, maxOffset) {
-    let duration = 1
+  snap(target) {
+    if (!this.o.snapping) {
+      return target
+    }
+    return nearestMultiple(target, this.o.snapStep)
+  }
 
-    if (!this.o.momentum) return [.1, target]
-
+  addMomentum(target, touchTime, offset) {
+    if (!this.o.momentum) return target
     if ((touchTime < this.o.moveThreshold) && offset !== 0 && Math.abs(offset) > (this.o.offsetThreshold)) {
       target += offset
-      duration = this.o.duration * Math.min((Math.abs(offset) / maxOffset), 1)
     }
-
-    return [duration, target]
+    return target
   }
 
   doTween(duration, target) {
