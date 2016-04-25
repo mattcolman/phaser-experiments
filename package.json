@@ -21,7 +21,6 @@
     "browserify": "^9.0.3",
     "del": "^1.2.0",
     "exorcist": "^0.4.0",
-    "gsap": "^1.18.3",
     "gulp": "^3.9.1",
     "gulp-buffer": "0.0.2",
     "gulp-if": "^1.2.5",
@@ -31,6 +30,7 @@
     "yargs": "^3.16.1"
   },
   "dependencies": {
-    "phaser": "^2.4.6"
+    "phaser": "^2.4.6",
+    "gsap": "^1.18.3"
   }
 }
