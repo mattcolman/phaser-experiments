@@ -94,4 +94,3 @@ create() {
   }
   
   ```
-![](http://i.imgur.com/Sp5aE0H.gif)
