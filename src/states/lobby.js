@@ -1,7 +1,6 @@
 import GameState from './game_state';
 import _ from 'lodash';
 import {scaleBetween} from '../utils/math_utils'
-import ListView from '../list_view'
 
 class Lobby extends GameState {
 
