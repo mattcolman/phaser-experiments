@@ -2,8 +2,8 @@ import Game from './game';
 
 var init = function() {
   var config = {
-    "width": 800,
-    "height": 600,
+    "width": 1366,
+    "height": 768,
     "renderer": Phaser.AUTO,
     "parent": 'content',
     "resolution": 1,//window.devicePixelRatio,
