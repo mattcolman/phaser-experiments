@@ -30,7 +30,8 @@
     "yargs": "^3.16.1"
   },
   "dependencies": {
+    "gsap": "^1.18.3",
     "phaser": "^2.4.6",
-    "gsap": "^1.18.3"
+    "phaser-list-view": "^1.0.1"
   }
 }
