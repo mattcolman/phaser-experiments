@@ -114,7 +114,7 @@ class WheelScrollerState extends GameState {
     let y = 200
 
     let str = ""
-    str += "input from -360 to 360"
+    str += "input from -360 to 360 with infinte flag"
     str += "\noutput moves a GSAP timeline's playhead"
     str += "\nbased on wheel percentage"
     this.addLabel(x, OUTPUT_Y - 200, str)
