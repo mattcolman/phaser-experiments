@@ -98,10 +98,10 @@ class WheelScrollerState extends GameState {
       snapping: true,
       bouncing: true,
       snapStep: 45,
-      overflow: 20 // degrees
+      overflow: 20, // degrees
     })
 
-    let rect = this.addRectangle('#ff0000')
+    let rect = this.addRectangle(this.mainGrp, '#ff0000')
     rect.position.set(x, y)
 
     wheelInput.events.onUpdate.add((o)=> {
@@ -111,7 +111,7 @@ class WheelScrollerState extends GameState {
 
   addWheel3() {
     let x = this.world.centerX + 300
-    let y = 100
+    let y = 200
 
     let str = ""
     str += "input from -360 to 360"
@@ -126,16 +126,24 @@ class WheelScrollerState extends GameState {
       snapping: true,
       bouncing: true,
       overflow: 20, // degrees
-      snapStep: 10
+      snapStep: 10,
+      infinite: true
     })
 
-    let rect = this.addRectangle('#00ff00')
-    rect.position.set(x, y)
-    rect.pivot.set(.5)
+    let grp = this.game.add.group(this.mainGrp)
+    let rect = this.addRectangle(grp, '#00ff00')
+    let rect2 = this.addRectangle(grp, '#ffff00')
+    rect2.scale.set(.5)
+    rect2.position.set(50, 50)
+    rect2.pivot.x = 75
+    rect2.alpha = .8
+    grp.position.set(x, y)
+    grp.pivot.x = 100
 
     var tl = new TimelineMax()
-    tl.insert(TweenMax.to(rect, .25, {x: '+=100', ease: Sine.easeInOut, repeat: 3, yoyo: true}))
-      .insert(TweenMax.to(rect, 1,  {y: 300, angle: 360, ease: Sine.easeInOut}))
+    tl.insert(TweenMax.to(grp, 1, {angle: 360, ease: Linear.easeNone}))
+      .insert(TweenMax.to(rect, 1,  {angle: -720, ease: Sine.easeInOut}))
+      .insert(TweenMax.to(rect2, 1,  {angle: 360, ease: Sine.easeInOut}))
     tl.pause()
 
     wheelInput.events.onUpdate.add((o)=> {
@@ -196,14 +204,14 @@ class WheelScrollerState extends GameState {
     return group
   }
 
-  addRectangle(color) {
+  addRectangle(parent, color) {
     let [w, h] = [100, 100]
     let bmd = this.add.bitmapData(w, h)
     bmd.ctx.beginPath()
     bmd.ctx.rect(0, 0, w, h)
     bmd.ctx.fillStyle = color
     bmd.ctx.fill()
-    var rect = this.add.sprite(0, 0, bmd, null, this.mainGrp)
+    var rect = this.add.sprite(0, 0, bmd, null, parent)
     rect.anchor.set(0.5)
     return rect
   }

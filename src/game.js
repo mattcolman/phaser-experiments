@@ -84,7 +84,7 @@ class Game extends Phaser.Game {
 }
 
 Game.prototype.experiments = [
-  // ['WheelScroller Example', WheelScrollerExample],
+  ['WheelScroller Example', WheelScrollerExample],
   ['lobby', Lobby],
   ['SpriteSheetBuilder Example', Particles],
   ['ListView Example', ListViewExample],
