@@ -25,7 +25,9 @@ class IpodState extends GameState {
       autocull: true,
       padding: 10
     })
-    this.listView.addMultiple(...this.makeManyItems())
+    this.listView.events.onAdded.add((limit)=>{
+      this.wheelScroller.setFromTo(0, limit)
+    })
 
     // WHEEL SCROLLER
     this.wheelScroller = this.addWheelScroller(this.world.centerX, OUTPUT_Y, {
@@ -38,19 +40,17 @@ class IpodState extends GameState {
     })
 
     this.wheelScroller.events.onUpdate.add((o)=> {
-      this.listView.update(-o.total)
+      this.listView.setPosition(-o.total)
     })
 
-    this.listView.events.onUpdate.add((limit)=>{
-      this.wheelScroller.setFromTo(0, limit)
-    })
+    this.listView.addMultiple(...this.makeItems())
 
     window.State = this
   }
 
-  makeManyItems() {
+  makeItems() {
     var arr = []
-    for (var i = 0; i < 50; i++) {
+    for (var i = 0; i < 10; i++) {
       let color = Phaser.Color.getRandomColor()
       arr.push(this.makeRectangle(color, TILE_WIDTH, this.game.rnd.integerInRange(50, 200)))
     }
