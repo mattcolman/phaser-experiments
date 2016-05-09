@@ -5,6 +5,7 @@ import ListViewExample from './states/list_view_state'
 import Lobby from './states/lobby'
 import SwipeCarouselExample from './states/swipe_carousel_state'
 import WheelScrollerExample from './states/wheel_scroller_state'
+import IpodStateExample from './states/ipod_state'
 
 class Game extends Phaser.Game {
 
@@ -84,7 +85,8 @@ class Game extends Phaser.Game {
 }
 
 Game.prototype.experiments = [
-  ['WheelScroller Example', WheelScrollerExample],
+  // ['ListView Example', ListViewExample],
+  ['test', IpodStateExample],
   ['lobby', Lobby],
   ['SpriteSheetBuilder Example', Particles],
   ['ListView Example', ListViewExample],
