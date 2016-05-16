@@ -3,14 +3,33 @@ import _ from 'lodash';
 import {scaleBetween} from '../utils/math_utils'
 import {ListViewCore, WheelScroller} from 'phaser-list-view'
 
-const OUTPUT_Y = 600
+const OUTPUT_Y = 516
 const INPUT_DIAMETER = 250
-const TILE_WIDTH = 300
+const TILE_WIDTH = 250
+
+const SONG_LIST = [
+  'song 1',
+  'song 2',
+  'song 3',
+  'song 4',
+  'song 5',
+  'song 6',
+  'song 7',
+  'song 8',
+  'song 9',
+  'song 10'
+]
 
 class IpodState extends GameState {
 
+  preload() {
+    this.game.load.image('ipod', '/images/ipod.jpg')
+  }
+
   create() {
     super.create()
+
+    this.game.add.image(0, 0, 'ipod')
 
     this.mainGrp = this.game.add.group()
 
@@ -19,11 +38,11 @@ class IpodState extends GameState {
     bmd.circle(r, r, r, '#ffffff')
 
     // LIST VIEW
-    let bounds = new Phaser.Rectangle(this.world.centerX - TILE_WIDTH/2, 100, TILE_WIDTH, 370)
+    let bounds = new Phaser.Rectangle(this.world.centerX - TILE_WIDTH/2, 100, TILE_WIDTH, 170)
     this.listView = new ListViewCore(this.game, this.world, bounds, {
       direction: 'y',
       autocull: true,
-      padding: 10
+      padding: 2
     })
     this.listView.events.onAdded.add((limit)=>{
       this.wheelScroller.setFromTo(0, limit)
@@ -51,8 +70,7 @@ class IpodState extends GameState {
   makeItems() {
     var arr = []
     for (var i = 0; i < 10; i++) {
-      let color = Phaser.Color.getRandomColor()
-      arr.push(this.makeRectangle(color, TILE_WIDTH, this.game.rnd.integerInRange(50, 200)))
+      arr.push(this.makeSlot(SONG_LIST[i]))
     }
     return arr
   }
@@ -61,7 +79,7 @@ class IpodState extends GameState {
     let clicker = this.game.add.graphics(0, 0, this.mainGrp)
     clicker.beginFill(0x333333)
            .drawCircle(0, 0, INPUT_DIAMETER)
-    clicker.alpha = 1
+    clicker.alpha = 0
     clicker.position.set(x, y)
 
     // we have to use a new mask instance for the click object or webgl ignores the mask
@@ -82,6 +100,7 @@ class IpodState extends GameState {
 
     var displayWheel = this.makeDefaultCircle(INPUT_DIAMETER)
     displayWheel.position.set(x, y)
+    displayWheel.alpha = .2
     displayWheel.txt.text = scroller.options.from
     this.mainGrp.addChild(displayWheel)
 
@@ -107,8 +126,15 @@ class IpodState extends GameState {
     return group
   }
 
+  makeSlot(str) {
+    let grp = this.game.make.group(null)
+    grp.addChild(this.makeRectangle(0xaabbd2, TILE_WIDTH, 30))
+    let txt = this.game.add.text(0, 0, str, {font: '14px Arial', fill: "#000"}, grp)
+    return grp
+  }
+
   makeRectangle(color, w, h) {
-    let g = this.add.graphics(0, 0)
+    let g = this.make.graphics(0, 0)
     g.beginFill(color)
      .drawRect(0, 0, w, h)
     return g
