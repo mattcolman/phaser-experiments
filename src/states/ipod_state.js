@@ -7,19 +7,6 @@ const OUTPUT_Y = 516
 const INPUT_DIAMETER = 250
 const TILE_WIDTH = 250
 
-const SONG_LIST = [
-  'song 1',
-  'song 2',
-  'song 3',
-  'song 4',
-  'song 5',
-  'song 6',
-  'song 7',
-  'song 8',
-  'song 9',
-  'song 10'
-]
-
 class IpodState extends GameState {
 
   preload() {
@@ -69,8 +56,8 @@ class IpodState extends GameState {
 
   makeItems() {
     var arr = []
-    for (var i = 0; i < 10; i++) {
-      arr.push(this.makeSlot(SONG_LIST[i]))
+    for (var i = 0; i < 30; i++) {
+      arr.push( this.makeSlot( `song ${i+1}` ) )
     }
     return arr
   }
