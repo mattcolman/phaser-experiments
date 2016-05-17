@@ -6,6 +6,9 @@ import {ListViewCore, WheelScroller} from 'phaser-list-view'
 const OUTPUT_Y = 516
 const INPUT_DIAMETER = 250
 const TILE_WIDTH = 250
+const TILE_HEIGHT = 30
+const LIGHT_BLUE = '#aabbd2'
+const DARK_BLUE = '#262a4a'
 
 class IpodState extends GameState {
 
@@ -25,8 +28,11 @@ class IpodState extends GameState {
     bmd.circle(r, r, r, '#ffffff')
 
     // LIST VIEW
-    let bounds = new Phaser.Rectangle(this.world.centerX - TILE_WIDTH/2, 100, TILE_WIDTH, 170)
-    this.listView = new ListViewCore(this.game, this.world, bounds, {
+    this.bounds = new Phaser.Rectangle(this.world.centerX - TILE_WIDTH/2, 100, TILE_WIDTH, 170)
+
+    this.highlight = this.addHighlight(this.world, this.bounds.x, this.bounds.y)
+
+    this.listView = new ListViewCore(this.game, this.world, this.bounds, {
       direction: 'y',
       autocull: true,
       padding: 2
@@ -45,13 +51,50 @@ class IpodState extends GameState {
       overflow: 20, // degrees
     })
 
+    this.previousIndex = 0
     this.wheelScroller.events.onUpdate.add((o)=> {
-      this.listView.setPosition(-o.total)
+      let index = Math.round(this.listView.items.length * o.percent)
+      index = Math.max(index, 0)
+      index = Math.min(index, this.listView.items.length-1)
+      console.log('index is', index)
+
+      if (index > this.previousIndex) {
+        if (this.highlight.y + TILE_HEIGHT + 2 > this.bounds.y + this.bounds.height - TILE_HEIGHT) {
+          this.listView.grp.y -= (TILE_HEIGHT + 2)
+          this.listView.cull()
+        } else {
+          this.highlight.y += TILE_HEIGHT + 2
+        }
+      } else if (index < this.previousIndex) {
+        if (this.highlight.y - (TILE_HEIGHT + 2) < this.bounds.y) {
+          this.listView.grp.y += (TILE_HEIGHT + 2)
+          this.listView.cull()
+        } else {
+          this.highlight.y -= TILE_HEIGHT + 2
+        }
+      }
+
+      if (index != this.previousIndex) {
+        this.listView.items[index].getChildAt(1).fill = LIGHT_BLUE
+        this.listView.items[this.previousIndex].getChildAt(1).fill = DARK_BLUE
+      }
+
+      this.previousIndex = index
     })
 
     this.listView.addMultiple(...this.makeItems())
+    this.listView.items[0].getChildAt(1).fill = LIGHT_BLUE
 
     window.State = this
+  }
+
+  addHighlight(parent, x, y) {
+    const w = TILE_WIDTH
+    const h = TILE_HEIGHT
+    let g = this.game.add.graphics(x, y, parent)
+    g.beginFill(0x262a4a)
+     .drawRect(0, 0, w, h)
+    return g
   }
 
   makeItems() {
@@ -115,8 +158,11 @@ class IpodState extends GameState {
 
   makeSlot(str) {
     let grp = this.game.make.group(null)
-    grp.addChild(this.makeRectangle(0xaabbd2, TILE_WIDTH, 30))
-    let txt = this.game.add.text(0, 0, str, {font: '14px Arial', fill: "#000"}, grp)
+    let rect = this.makeRectangle(0xaabbd2, TILE_WIDTH, TILE_HEIGHT)
+    rect.alpha = 0
+    grp.addChild(rect)
+    let txt = this.game.add.text(10, TILE_HEIGHT/2, str, {font: '14px Arial', fill: "#000"}, grp)
+    txt.anchor.set(0, .5)
     return grp
   }
 
