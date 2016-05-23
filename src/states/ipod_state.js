@@ -2,6 +2,7 @@ import GameState from './game_state';
 import _ from 'lodash';
 import {scaleBetween} from '../utils/math_utils'
 import {ListViewCore, WheelScroller} from 'phaser-list-view'
+import {Client, TrackHandler, PlaylistHandler} from 'spotify-sdk';
 
 const OUTPUT_Y = 516
 const INPUT_DIAMETER = 250
@@ -18,6 +19,8 @@ class IpodState extends GameState {
 
   create() {
     super.create()
+
+    this.initSpotify()
 
     this.game.add.image(0, 0, 'ipod')
 
@@ -87,6 +90,40 @@ class IpodState extends GameState {
 
     window.State = this
   }
+
+  initSpotify() {
+    this.client = Client.instance
+    this.client.settings = {
+      clientId: '8a9c53bde39b4d1e945194d3b0399b3f',
+      secretId: '94f0590f701945bbb32ecb718647e2c7',
+      scopes: ['user-follow-modify user-follow-read user-library-read user-top-read'],
+      redirect_uri: 'http://localhost:3000/callback'
+    }
+
+    this.session()
+    document.querySelector('#login').onclick = ()=> { this.login() }
+  }
+
+  /*
+   * Login user
+   * This is a way, you can do it however you want
+   */
+  session() {
+      if (sessionStorage.token) {
+          this.client.token = sessionStorage.token;
+      } else if (window.location.hash.split('&')[0].split('=')[1]) {
+          sessionStorage.token = window.location.hash.split('&')[0].split('=')[1];
+          this.client.token = sessionStorage.token;
+      }
+  }
+
+
+  login() {
+    this.client.login().then((url) => {
+        window.location.href = url;
+    });
+  }
+
 
   addHighlight(parent, x, y) {
     const w = TILE_WIDTH
