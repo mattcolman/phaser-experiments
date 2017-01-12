@@ -1,5 +1,6 @@
 ## Usage
 
+
 You need [Node.js and npm](https://nodejs.org/). You should also have git installed, but it's not mandatory.
 
 Install dependencies
