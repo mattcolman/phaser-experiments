@@ -1,5 +1,6 @@
 ## Usage
 
+
 You need [Node.js and npm](https://nodejs.org/). You should also have git installed, but it's not mandatory.
 
 Install dependencies
@@ -61,7 +62,7 @@ triangle() {
 
 ![](http://i.imgur.com/XgdgqYX.gif)
 
-Making iOS-like ListViews are pretty common. It's also common that when you make them yourself performance suffers. Here is a start at making a high-performance ListView for Phaser. Currently the example adds 500 items to the ListView and performance is holding up. With that said, if the list view is truely infinite we should think about completely removing items beyond a certain threshold. 
+Making iOS-like ListViews are pretty common. It's also common that when you make them yourself performance suffers. Here is a start at making a high-performance ListView for Phaser. Currently the example adds 500 items to the ListView and performance is holding up. With that said, if the list view is truely infinite we should think about completely removing items beyond a certain threshold.
 
 This approach uses a mask to mask items that overlap the bounds. (Not sure if this is the fastest method? But it seems pretty fast actually).
 The main performance boost comes from autoculling items. Chrome actually still runs at 60fps without culling, but FF slowed down dramatically and showed 500 draw calls in the canvas inspector. After culling the drawing calls were reduced to ~10 and fps back up to 60.
@@ -78,7 +79,7 @@ create() {
       overflow: 100,
       autocull: true
     })
-    
+
     for (var i = 0; i < 500; i++) {
       let color = Phaser.Color.getRandomColor()
       let group = this.game.make.group(null)
@@ -92,5 +93,5 @@ create() {
       this.listView.add(img)
     }
   }
-  
+
   ```
